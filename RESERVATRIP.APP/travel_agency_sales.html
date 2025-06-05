@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva TRIP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            
+            min-height: 100vh; 
+            justify-content: center;
+            align-items: center;
+            background-color: #F0F4F3;
+            background: url("img/RT1.0.svg")no-repeat center top;
+            background-size: cover;
+            height: 100 vh;
+            /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: url('img/RT1.0.svg');
+            min-height: 100vh;
+            color: #333;*/
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #4299e1, #553c9a);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #f56565, #e53e3e);
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
+        .error {
+            color: #e53e3e;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success {
+            background: #48bb78;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tu Reserva TRIP</h1>
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="showSection('dashboard')">📊 Dashboard</button>
+                <button class="nav-btn" onclick="showSection('ventas')">💰 Gestión de Ventas</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <h2>📈 Dashboard de Ventas</h2>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Total de Ventas</h3>
+                    <div class="value" id="totalVentas">$0</div>
+                </div>
+                <div class="card">
+                    <h3>Promedio de Ventas</h3>
+                    <div class="value" id="promedioVentas">$0</div>
+                </div>
+                <div class="card">
+                    <h3>Total Comisiones</h3>
+                    <div class="value" id="totalComisiones">$0</div>
+                </div>
+                <div class="card">
+                    <h3>Número de Ventas</h3>
+                    <div class="value" id="numeroVentas">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas Section -->
+        <div id="ventas" class="section">
+            <h2>💰 Gestión de Ventas</h2>
+            
+            <div class="success" id="successMessage"></div>
+            
+            <button class="btn btn-primary" onclick="openModal()">➕ Nueva Venta</button>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar por cliente, código de reserva..." onkeyup="filterTable()">
+            </div>
+
+            <div class="table-container">
+                <table id="ventasTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha Venta</th>
+                            <th>Fecha Registro</th>
+                            <th>Código Reserva</th>
+                            <th>Cliente</th>
+                            <th>Total Venta</th>
+                            <th>Comisión (30%)</th>
+                            <th>Usuario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventasTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para CRUD -->
+    <div id="ventaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle">Nueva Venta</h3>
+            
+            <form id="ventaForm">
+                <input type="hidden" id="ventaId">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fechaVenta">Fecha de Venta *</label>
+                        <input type="date" id="fechaVenta" required>
+                        <div class="error" id="fechaVentaError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="codigoReserva">Código de Reserva *</label>
+                        <input type="text" id="codigoReserva" placeholder="Ej: RES001" required>
+                        <div class="error" id="codigoReservaError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cliente">Cliente *</label>
+                        <input type="text" id="cliente" placeholder="Nombre del cliente" required>
+                        <div class="error" id="clienteError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="totalVenta">Total Venta *</label>
+                        <input type="number" id="totalVenta" step="0.01" min="0" placeholder="0.00" required>
+                        <div class="error" id="totalVentaError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="usuarioRegistra">Usuario que Registra *</label>
+                        <input type="text" id="usuarioRegistra" placeholder="Nombre del usuario" required>
+                        <div class="error" id="usuarioRegistraError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comision">Comisión (30%)</label>
+                        <input type="number" id="comision" step="0.01" readonly style="background-color: #f7fafc;">
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button type="submit" class="btn btn-success">💾 Guardar</button>
+                    <button type="button" class="btn btn-warning" onclick="closeModal()">❌ Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos en memoria
+        let ventas = [
+            {
+                id: 1,
+                fechaVenta: '2024-06-01',
+                fechaRegistro: '2024-06-01',
+                codigoReserva: 'RES001',
+                cliente: 'Juan Pérez',
+                totalVenta: 1500000,
+                comision: 450000,
+                usuarioRegistra: 'Ana García'
+            },
+            {
+                id: 2,
+                fechaVenta: '2024-06-02',
+                fechaRegistro: '2024-06-02',
+                codigoReserva: 'RES002',
+                cliente: 'María López',
+                totalVenta: 2200000,
+                comision: 660000,
+                usuarioRegistra: 'Carlos Ruiz'
+            },
+            {
+                id: 3,
+                fechaVenta: '2024-06-03',
+                fechaRegistro: '2024-06-03',
+                codigoReserva: 'RES003',
+                cliente: 'Pedro González',
+                totalVenta: 1800000,
+                comision: 540000,
+                usuarioRegistra: 'Ana García'
+            }
+        ];
+        
+        let nextId = 4;
+        let editingId = null;
+
+        // Funciones de navegación
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.section');
+            const buttons = document.querySelectorAll('.nav-btn');
+            
+            sections.forEach(section => section.classList.remove('active'));
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            document.getElementById(sectionName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (sectionName === 'dashboard') {
+                updateDashboard();
+            } else if (sectionName === 'ventas') {
+                loadVentas();
+            }
+        }
+
+        // Funciones del Dashboard
+        function updateDashboard() {
+            const totalVentas = ventas.reduce((sum, venta) => sum + venta.totalVenta, 0);
+            const promedioVentas = ventas.length > 0 ? totalVentas / ventas.length : 0;
+            const totalComisiones = ventas.reduce((sum, venta) => sum + venta.comision, 0);
+            const numeroVentas = ventas.length;
+
+            document.getElementById('totalVentas').textContent = formatCurrency(totalVentas);
+            document.getElementById('promedioVentas').textContent = formatCurrency(promedioVentas);
+            document.getElementById('totalComisiones').textContent = formatCurrency(totalComisiones);
+            document.getElementById('numeroVentas').textContent = numeroVentas;
+        }
+
+        // Funciones de formato
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('es-CO');
+        }
+
+        // Funciones CRUD
+        function loadVentas() {
+            const tbody = document.getElementById('ventasTableBody');
+            tbody.innerHTML = '';
+
+            ventas.forEach(venta => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${formatDate(venta.fechaVenta)}</td>
+                    <td>${formatDate(venta.fechaRegistro)}</td>
+                    <td><strong>${venta.codigoReserva}</strong></td>
+                    <td>${venta.cliente}</td>
+                    <td>${formatCurrency(venta.totalVenta)}</td>
+                    <td>${formatCurrency(venta.comision)}</td>
+                    <td>${venta.usuarioRegistra}</td>
+                    <td>
+                        <button class="btn btn-warning" onclick="editVenta(${venta.id})">✏️ Editar</button>
+                        <button class="btn btn-danger" onclick="deleteVenta(${venta.id})">🗑️ Eliminar</button>
+                    </td>
+                `;
+            });
+        }
+
+        function openModal(id = null) {
+            const modal = document.getElementById('ventaModal');
+            const form = document.getElementById('ventaForm');
+            const title = document.getElementById('modalTitle');
+            
+            form.reset();
+            clearErrors();
+            
+            if (id) {
+                const venta = ventas.find(v => v.id === id);
+                if (venta) {
+                    editingId = id;
+                    title.textContent = 'Editar Venta';
+                    document.getElementById('ventaId').value = venta.id;
+                    document.getElementById('fechaVenta').value = venta.fechaVenta;
+                    document.getElementById('codigoReserva').value = venta.codigoReserva;
+                    document.getElementById('cliente').value = venta.cliente;
+                    document.getElementById('totalVenta').value = venta.totalVenta;
+                    document.getElementById('comision').value = venta.comision;
+                    document.getElementById('usuarioRegistra').value = venta.usuarioRegistra;
+                }
+            } else {
+                editingId = null;
+                title.textContent = 'Nueva Venta';
+                document.getElementById('fechaVenta').value = new Date().toISOString().split('T')[0];
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('ventaModal').style.display = 'none';
+            editingId = null;
+        }
+
+        function editVenta(id) {
+            openModal(id);
+        }
+
+        function deleteVenta(id) {
+            if (confirm('¿Está seguro de que desea eliminar esta venta?')) {
+                ventas = ventas.filter(v => v.id !== id);
+                loadVentas();
+                updateDashboard();
+                showSuccessMessage('Venta eliminada exitosamente');
+            }
+        }
+
+        // Validación y envío del formulario
+        document.getElementById('ventaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (validateForm()) {
+                const formData = {
+                    fechaVenta: document.getElementById('fechaVenta').value,
+                    fechaRegistro: new Date().toISOString().split('T')[0],
+                    codigoReserva: document.getElementById('codigoReserva').value.trim(),
+                    cliente: document.getElementById('cliente').value.trim(),
+                    totalVenta: parseFloat(document.getElementById('totalVenta').value),
+                    usuarioRegistra: document.getElementById('usuarioRegistra').value.trim()
+                };
+                
+                formData.comision = formData.totalVenta * 0.3;
+                
+                if (editingId) {
+                    const index = ventas.findIndex(v => v.id === editingId);
+                    ventas[index] = { ...formData, id: editingId };
+                    showSuccessMessage('Venta actualizada exitosamente');
+                } else {
+                    ventas.push({ ...formData, id: nextId++ });
+                    showSuccessMessage('Venta registrada exitosamente');
+                }
+                
+                closeModal();
+                loadVentas();
+                updateDashboard();
+            }
+        });
+
+        function validateForm() {
+            let isValid = true;
+            clearErrors();
+            
+            const fechaVenta = document.getElementById('fechaVenta').value;
+            const codigoReserva = document.getElementById('codigoReserva').value.trim();
+            const cliente = document.getElementById('cliente').value.trim();
+            const totalVenta = document.getElementById('totalVenta').value;
+            const usuarioRegistra = document.getElementById('usuarioRegistra').value.trim();
+            
+            if (!fechaVenta) {
+                showFieldError('fechaVentaError', 'La fecha de venta es requerida');
+                isValid = false;
+            }
+            
+            if (!codigoReserva) {
+                showFieldError('codigoReservaError', 'El código de reserva es requerido');
+                isValid = false;
+            } else {
+                const existingCode = ventas.find(v => v.codigoReserva === codigoReserva && v.id !== editingId);
+                if (existingCode) {
+                    showFieldError('codigoReservaError', 'Este código de reserva ya existe');
+                    isValid = false;
+                }
+            }
+            
+            if (!cliente) {
+                showFieldError('clienteError', 'El nombre del cliente es requerido');
+                isValid = false;
+            }
+            
+            if (!totalVenta || parseFloat(totalVenta) <= 0) {
+                showFieldError('totalVentaError', 'El total de venta debe ser mayor a 0');
+                isValid = false;
+            }
+            
+            if (!usuarioRegistra) {
+                showFieldError('usuarioRegistraError', 'El usuario que registra es requerido');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        function showFieldError(fieldId, message) {
+            document.getElementById(fieldId).textContent = message;
+        }
+
+        function clearErrors() {
+            const errorFields = ['fechaVentaError', 'codigoReservaError', 'clienteError', 'totalVentaError', 'usuarioRegistraError'];
+            errorFields.forEach(field => {
+                document.getElementById(field).textContent = '';
+            });
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Cálculo automático de comisión
+        document.getElementById('totalVenta').addEventListener('input', function() {
+            const total = parseFloat(this.value) || 0;
+            const comision = total * 0.3;
+            document.getElementById('comision').value = comision.toFixed(2);
+        });
+
+        // Función de búsqueda
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('ventasTable');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < td.length - 1; j++) {
+                    if (td[j] && td[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                tr[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('ventaModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDashboard();
+            loadVentas();
+        });
+    </script>
+</body>
+</html>
